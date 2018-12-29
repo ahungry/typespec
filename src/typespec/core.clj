@@ -1,4 +1,5 @@
 ;; (require 'typespec.core :reload)
+;; https://github.com/clojure/core.typed/wiki/Types
 (ns typespec.core
   {:lang :core.typed}
   (:require
@@ -16,8 +17,14 @@
 (defn good []
   (add-nums 3 4))
 
-(defn bad []
-  (add-nums "dog" "cat"))
+;; (defn bad []
+;;   (add-nums "dog" "cat"))
+
+(defun hello-name [Str s Str]
+  (println "Hello " s))
+
+(defn hn-call []
+  (hello-name 3))
 
 (defn foo
   "I don't do a whole lot."

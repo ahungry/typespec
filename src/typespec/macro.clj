@@ -32,7 +32,7 @@
   (cond
     (= "Int" (name symbol)) 't/Int
     (= "Str" (name symbol)) 't/Str
-    :else symbol))
+    :else 't/Nothing))
 
 (def tstt typespec-symbol-to-typed)
 
