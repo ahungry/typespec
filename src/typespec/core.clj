@@ -23,11 +23,38 @@
 ;; (defn two-call []
 ;;   (add-two "oops"))
 
-(defmacro defun [name sig & args]
+(defn typespec-symbol-to-spec [symbol]
+  (cond
+    (= "Int" (name symbol)) 'int?
+    (= "Str" (name symbol)) 'string?
+    :else symbol))
+
+(def tsts typespec-symbol-to-spec)
+
+(defn typespec-symbol-to-typed [symbol]
+  (cond
+    (= "Int" (name symbol)) 't/Int
+    (= "Str" (name symbol)) 't/Str
+    :else symbol))
+
+(def tstt typespec-symbol-to-typed)
+
+(defmacro defun
+  "Usage:  (defun doubler (Int x Int) (+ x x))."
+  [name sig & args]
   `(do
-     (t/ann ~name [~@(take-nth 2 (butlast sig)) :-> ~(last sig)])
      (defn ~name [~@(take-nth 2 (rest sig))]
-       ~@args)))
+       ~@args)
+     (s/fdef ~name
+       :args (s/cat ~@(flatten
+                       (into []
+                             (zipmap
+                              (map keyword (take-nth 2 (rest sig)))
+                              (map tsts (take-nth 2 (butlast sig)))))))
+       :ret ~(tsts (last sig)))
+     (t/ann ~name [~@(map tstt (take-nth 2 (butlast sig))) :-> ~(tstt (last sig))])
+     (stest/instrument)
+     ))
 
 (s/fdef add-nums
   :args (s/cat :a int? :b int?)
@@ -35,7 +62,7 @@
 (stest/instrument `add-nums)
 ;; (s/exercise-fn `add-nums)
 
-(defun add-nums (t/Int a t/Int b t/Int)
+(defun add-nums (Int a Int b Int)
   (+ a b))
 
 (defn woops []
