@@ -5,6 +5,36 @@ core typed in a more user friendly / less verbose fashion.
 
 ## Usage
 
+### Without typespec syntax
+
+See this verbose sample - maybe that's what drives some people away
+from using both spec and core typed together?
+
+```
+(t/ann add-nums [t/Int t/Int :-> t/Int])
+
+(defn add-nums [a b]
+  (+ a b))
+
+(s/fdef add-nums
+  :args (s/cat :a int? :b int?)
+  :ret int?))
+
+(stest/instrument `add-nums)
+```
+
+What if it could be reduced to a simple:
+
+```
+(defun add-nums (Int a Int b → Int)
+  (+ a b))
+```
+
+To enable all the same features/functionality?
+
+
+### With typespec syntax
+
 This is early/WIP, do not use it yet (although it is a bit usable).
 
 It is going to enable syntax such as:
